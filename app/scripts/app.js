@@ -63,7 +63,7 @@ Instructions:
         You'll need to add a .then and a .catch. Pass the response to addSearchHeader on resolve or
         pass 'unknown' to addSearchHeader if it rejects.
          */
-        getJSON('http://udacity.github.io/exoplanet-explorer/site/app/data/earth-like-results.json')
+        getJSON('../data/earth-like-results.json')
         .then(function(response) {
             addSearchHeader(response.query);
         })
