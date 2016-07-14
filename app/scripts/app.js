@@ -1,7 +1,7 @@
 /*
 Instructions:
 (1) Wrap an XHR in a Promise in the get() function below. See: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/Using_XMLHttpRequest
-	(a) Resolve on load and reject on error.
+    (a) Resolve on load and reject on error.
 (2) If the XHR resolves, use addSearchHeader to add the search header to the page.
 (3) If the XHR fails, console.log the error and pass 'unknown' to addSearchHeader
  */
@@ -10,66 +10,66 @@ Instructions:
 /* jshint unused: false */
 
 (function(document) {
-	'use strict';
+    'use strict';
 
-	var home = null;
+    var home = null;
 
-	/**
-	 * Helper function to show the search query.
-	 * @param {String} response - The unparsed JSON response from get.
-	 */
-	function addSearchHeader(response) {
-		try {
-			response = JSON.parse(response).query;  // you'll be moving this line out of here in the next quiz!
-		} catch (e) {
-			// it's 'unknown', so leave it alone
-		}
-		home.innerHTML = '<h2 class="page-title">query: ' + response + '</h2>';
-	}
+    /**
+     * Helper function to show the search query.
+     * @param {String} response - The unparsed JSON response from get.
+     */
+    function addSearchHeader(response) {
+        try {
+            response = JSON.parse(response).query;  // you'll be moving this line out of here in the next quiz!
+        } catch (e) {
+            // it's 'unknown', so leave it alone
+        }
+        home.innerHTML = '<h2 class="page-title">query: ' + response + '</h2>';
+    }
 
-	/**
-	 * XHR wrapped in a promise.
-	 * @param  {String} url - The URL to fetch.
-	 * @return {Promise}    - A Promise that resolves when the XHR succeeds and fails otherwise.
-	 */
-	function get(url) {
-		/*
-		This code needs to get wrapped in a Promise!
-		 */
-		return new Promise(function(resolve, reject) {
+    /**
+     * XHR wrapped in a promise.
+     * @param  {String} url - The URL to fetch.
+     * @return {Promise}    - A Promise that resolves when the XHR succeeds and fails otherwise.
+     */
+    function get(url) {
+        /*
+        This code needs to get wrapped in a Promise!
+         */
+        return fetch(url, {
+            method: 'get'
+        })
+    };
 
-		var req = new XMLHttpRequest();
-		req.open('GET', url);
-		req.onload = function() {
-			if (req.status === 200) {
-				resolve(req.response);
-			} else {
-				reject(Error(req.statusText));
-				console.log('It failed 1!');
-			}
-		};
-		req.onerror = function() {
-			reject(Error('Network Error'));
-			console.log('It failed 2!');
-		};
-		req.send();
+    /**
+    * Performs an XHR for a JSON and returns a parsed JSON response.
+    * @param  {String} url - The JSON URL to fetch.
+    * @return {Promise}    - A promise that passes the parsed JSON response.
+    */
+    function getJSON(url) {
+        /*
+        Return a Promise that gets a URL and parses the JSON response. Use your get method!
+        Your code goes here!
+         */
+        return get(url).then(function(response) {
+            return response.json();
+        });
+    }
 
-		})
-	}
-
-	window.addEventListener('WebComponentsReady', function() {
-		home = document.querySelector('section[data-route="home"]');
-		/*
-		Uncomment the next line you're ready to start chaining and testing!
-		You'll need to add a .then and a .catch. Pass the response to addSearchHeader on resolve or
-		pass 'unknown' to addSearchHeader if it rejects.
-		 */
-		get('../data/earth-like-results.json')
-			.then(function(response) {
-			addSearchHeader(response);
-		}).catch(function(error) {
-			addSearchHeader('unknown');
-			console.log(error);
-		});
-	});
+    window.addEventListener('WebComponentsReady', function() {
+        home = document.querySelector('section[data-route="home"]');
+        /*
+        Uncomment the next line you're ready to start chaining and testing!
+        You'll need to add a .then and a .catch. Pass the response to addSearchHeader on resolve or
+        pass 'unknown' to addSearchHeader if it rejects.
+         */
+        getJSON('http://udacity.github.io/exoplanet-explorer/site/app/data/earth-like-results.json')
+        .then(function(response) {
+            addSearchHeader(response.query);
+        })
+        .catch(function(error) {
+            addSearchHeader('unknown');
+            console.log(error);
+        });
+    });
 })(document);
